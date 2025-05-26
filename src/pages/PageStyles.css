@@ -1,0 +1,137 @@
+/* ----- variables rápidas ----- */
+:root {
+    --c-teal: #006b7e;   /* fondo principal del navbar */
+    --c-teal-light: #007e93; /* para degradado */
+    --c-bg: #ffffff;     /* fondo blanco del canvas */
+    --c-highlight: #ffffff; /* activo */
+  }
+  
+  /* Layout base ---------------------------------------------------------- */
+  .page-layout {
+    position: relative;
+    padding: 1.5rem 1rem;
+    background: var(--c-bg);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  
+  /* Degradado fijo al lado derecho */
+  .side-gradient {
+    position: fixed; /* se mantiene aunque hagas scroll */
+    top: 0;
+    right: 0;
+    width: 260px;           /* ajusta a tu gusto */
+    height: 100%;
+    background: linear-gradient(180deg, var(--c-teal) 0%, var(--c-teal-light) 100%);
+    z-index: -1;            /* detrás de todo */
+  }
+  
+  /* ------------------------------------------------ Navbar */
+  .header {
+    margin-bottom: 2rem;
+  }
+  
+  .nav-container {
+    background: var(--c-teal);
+    padding: 0.35rem 1.25rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 42px;
+  }
+  
+  /* lista horizontal */
+  .nav-list {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* enlaces */
+  .nav-link,
+  .dropdown-link {
+    color: var(--c-bg);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1;
+    padding: 5px 0; /* espacio vertical para mejor click-area */
+    display: inline-block;
+  }
+  
+  /* estado activo */
+  .nav-link.active,
+  .dropdown-link.active {
+    background: var(--c-highlight);
+    color: var(--c-teal);
+    border-radius: 6px;
+    padding: 5px 10px;
+  }
+  
+  /* ---------- Dropdown */
+  .dropdown {
+    position: relative;
+  }
+  
+  /* flecha ▼ */
+  .dropdown-toggle::after {
+    content: "▼";
+    font-size: 0.55rem;
+    margin-left: 0.35rem;
+  }
+  
+  /* menú oculto por defecto */
+  .dropdown-menu {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 6px);
+    background: var(--c-teal);
+    border-radius: 6px;
+    min-width: 140px;
+    padding: 0.4rem 0;
+    display: none;
+    z-index: 1000;
+  }
+  
+  /* mostrar al pasar el mouse o al recibir foco */
+  .dropdown:hover .dropdown-menu,
+  .dropdown:focus-within .dropdown-menu {
+    display: block;
+  }
+  
+  .dropdown-link {
+    display: block;
+    padding: 0.45rem 1rem;
+  }
+  
+  .dropdown-link:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+  
+  /* ---------- Logo derecha */
+  .logo {
+    height: 26px;
+    object-fit: contain;
+  }
+  
+  /* ------------------------------------------------ Contenido */
+  .main-content {
+    margin-top: 1rem;
+  }
+  
+  /* Responsive (opcional) ---------------------------------------------- */
+  @media (max-width: 640px) {
+    .nav-container {
+      flex-direction: column;
+      gap: 0.75rem;
+      height: auto;
+    }
+  
+    .logo {
+      align-self: flex-end;
+    }
+  }
+  

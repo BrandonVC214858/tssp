@@ -1,84 +1,118 @@
-import React, { useState, useEffect } from "react";
-import { getPredialData, postPredial } from "../services/api";
+import React, { useState, useEffect } from 'react';
+import { postJson, getJson } from '../services/api';
+import './forms.css';
 
-export default function PredialPage() {
-  const [form, setForm] = useState({ nombre: "", direccion: "" });
-  const [msg, setMsg] = useState("");
-  const [registros, setRegistros] = useState([]);
+export default function PredialService() {
+  const [form, setForm] = useState({ nombre: '', direccion: '' });
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState('');
 
-  useEffect(() => {
-    loadRegistros();
-  }, []);
-
-  const loadRegistros = async () => {
+  // Carga inicial de datos
+  useEffect(() => { fetchAll(); }, []);
+  const fetchAll = async () => {
     try {
-      const data = await getPredialData();
-      setRegistros(data);
-    } catch (err) {
-      console.error("Error al cargar registros Predial:", err);
+      const items = await getJson('/predial');
+      setData(items);
+    } catch {
+      setErr('No se pudo cargar');
     }
   };
 
-  const handleSubmit = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    setMsg("Enviando…");
+    setLoading(true);
+    setErr('');
     try {
-      const res = await postPredial(form);
-      setMsg(`✓ ${res.message || "Registro exitoso"} — Clave: ${res.clave}`);
-      setForm({ nombre: "", direccion: "" });
-      loadRegistros();
-    } catch (err) {
-      setMsg("Error: " + err.message);
+      await postJson('/predial', form);
+      setForm({ nombre: '', direccion: '' });
+      fetchAll();
+    } catch (e) {
+      setErr(e.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <section className="p-4 space-y-4">
-      <h2 className="text-lg font-bold">Servicio Predial</h2>
+    <div className="jmas-page-wrapper">
+      {/* Navbar decorado */}
+      <nav className="navbar-forms">
+        <div className="navbar-left">
+          <img src="/assets/logo-tss.png" alt="Logo" className="nav-logo" />
+          <a href="/predial" className="nav-item">Predial</a>
+          <a href="/jmas" className="nav-item">JMAS</a>
+          <a href="/revalidacion" className="nav-item active">Revalidación</a>
+          <a href="/gasnn" className="nav-item">Gas Natural</a>
+        </div>
+        <div className="navbar-right">
+          <div className="user-menu">
+            <img src="/user.jpg" alt="Usuario" className="user-icon" />
+            <div className="user-dropdown">
+              <button className="user-btn">Perfil</button>
+              <button className="user-btn">Cerrar sesión</button>
+            </div>
+          </div>
+        </div>
+      </nav>
 
-      <form onSubmit={handleSubmit} className="space-y-2">
-        <input
-          required
-          name="nombre"
-          value={form.nombre}
-          onChange={e => setForm({ ...form, nombre: e.target.value })}
-          placeholder="Nombre"
-          className="border p-2 rounded w-full"
-        />
-        <input
-          required
-          name="direccion"
-          value={form.direccion}
-          onChange={e => setForm({ ...form, direccion: e.target.value })}
-          placeholder="Dirección"
-          className="border p-2 rounded w-full"
-        />
-        <button className="bg-blue-600 text-white px-4 py-2 rounded">
-          Registrar
-        </button>
-      </form>
+      {/* Título principal */}
+      <h1 className="jmas-title">Impuesto Predial</h1>
 
-      {msg && <p>{msg}</p>}
+      <div className="jmas-content-wrapper">
+        {/* Sección de formulario */}
+        <section className="jmas-form-section">
+          <form onSubmit={submit} className="jmas-form-layout">
+            {['nombre', 'direccion'].map((field) => (
+              <div key={field} className="form-field-group">
+                <label htmlFor={field} className="form-label">
+                  {field.charAt(0).toUpperCase() + field.slice(1)}
+                </label>
+                <input
+                  id={field}
+                  name={field}
+                  type="text"
+                  placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                  value={form[field]}
+                  onChange={e => setForm({ ...form, [field]: e.target.value })}
+                  className="jmas-input"
+                  required
+                />
+              </div>
+            ))}
 
-      <h3 className="text-lg font-bold">Registros Predial</h3>
-      <table className="w-full text-sm border">
-        <thead className="bg-gray-100">
-          <tr>
-            <th>Clave</th><th>Nombre</th><th>Dirección</th><th>Estatus</th><th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {registros.map((r, i) => (
-            <tr key={i} className="border-t text-center">
-              <td>{r.clave}</td>
-              <td>{r.nombre}</td>
-              <td>{r.direccion}</td>
-              <td>{r.estatus}</td>
-              <td>${r.total_pagar?.toFixed(2)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </section>
+            <button
+              type="submit"
+              disabled={loading}
+              className="jmas-submit-button"
+            >
+              {loading ? 'Enviando…' : 'Registrar consulta'}
+            </button>
+          </form>
+
+          {err && <p className="jmas-error-message">{err}</p>}
+        </section>
+
+        {/* Sección de resultados */}
+        <section className="jmas-services-section">
+          <h2 className="jmas-subtitle">Resultados</h2>
+          <div className="jmas-services-list">
+            {data.map((r) => (
+              <div key={r.clave} className="jmas-service-item">
+                <div className="jmas-service-account">Clave: {r.clave}</div>
+                <div className="jmas-service-detail">Nombre: {r.nombre}</div>
+                <div className="jmas-service-detail">Estatus: {r.estatus}</div>
+                <div className="jmas-service-detail">
+                  Total a pagar: ${r.total_pagar.toFixed(2)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      {/* Footer */}
+      <footer className="footer-yellow" />
+    </div>
   );
 }

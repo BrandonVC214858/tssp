@@ -1,16 +1,17 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+// File: src/services/apiVehiculos.js
+
 import axios from "axios";
 
-// Cliente Axios apuntando a /prod
-export const apiVehiculos = axios.create({
-  baseURL: "https://lrjxs6izo0.execute-api.us-west-2.amazonaws.com/prod",
-  headers: { "Content-Type": "application/json" },
-});
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://k48v40lcjc.execute-api.us-west-2.amazonaws.com/prod/barcode/revalidacion";
 
-export const useCreateVehiculo = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (vehiculo) => apiVehiculos.post("/revalidacion", vehiculo).then(r => r.data),
-    onSuccess: () => qc.invalidateQueries(["vehiculos"]),
-  });
-};
+/**
+ * Registra una revalidación vehicular.
+ * @param {{ placa: string, monto: number }} data 
+ * @returns {Promise<any>}
+ */
+export async function postRevalidacion(data) {
+  const resp = await axios.post(`${API_BASE}/revalidacion`, data);
+  return resp.data;
+}

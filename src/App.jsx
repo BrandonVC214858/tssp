@@ -69,12 +69,11 @@ export default function App() {
           <Route path="/revalidacion" element={<RevalidacionVehicular />} />
           <Route path="/"          element={<PromoSection />} />
 
-          <Route path="/jmas-servicio" element={<JmasPage />} />
+          <Route path="/jmas" element={<JmasPage />} />
           <Route path="/revalidacion"  element={<RevalidacionPage />} />
           <Route path="/predial"       element={<PredialPage />} />
           <Route element={<PageLayout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/jmas" element={<JmasPage />} />
           
 
           <Route element={<PageLayout />}>

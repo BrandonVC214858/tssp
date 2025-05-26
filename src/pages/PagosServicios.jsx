@@ -1,98 +1,180 @@
-import React, { useState } from 'react';
-import BarcodeScanner from 'react-qr-barcode-scanner';
-import { postJson } from '../services/api';
-
-const SERVICIOS = {
-  jmas:   { label: 'JMAS Agua',          path: '/jmas' },
-  gasnn:  { label: 'Gas Natural',        path: '/gasnn' },
-  revalidacion: { label: 'Revalidación', path: '/revalidacion' },
-  predial: { label: 'Impuesto Predial',  path: '/predial' }
-};
+// src/pages/PagosServicios.jsx
+import React, { useState } from "react";
+import BarcodeScanner from "react-qr-barcode-scanner";
+import { postJson } from "../services/api";
+import "./forms.css";
 
 export default function PagosServicios() {
-  const [service, setService]     = useState('jmas');
-  const [idCliente, setIdCliente] = useState('');
-  const [barcodeB64, setBarcode]  = useState('');
-  const [scanning, setScanning]   = useState(false);
-  const [msg, setMsg]             = useState({ tipo: null, texto: '' });
+  const SERVICIOS = {
+    jmas:         { label: "JMAS Agua",        path: "/jmas" },
+    gasnn:        { label: "Gas Natural",      path: "/gasnn" },
+    revalidacion: { label: "Revalidación",     path: "/revalidacion" },
+    predial:      { label: "Impuesto Predial", path: "/predial" }
+  };
+
+  const [service,    setService]    = useState("jmas");
+  const [folio,      setFolio]      = useState("");
+  const [barcodeB64, setBarcodeB64] = useState("");
+  const [scanning,   setScanning]   = useState(false);
+  const [scanResult, setScanResult] = useState(null);
+  const [msg,        setMsg]        = useState({ tipo: null, texto: "" });
 
   const generarCodigo = async () => {
-    if (!idCliente) return setMsg({ tipo: 'error', texto: 'Ingrese número/ID' });
+    if (!folio) {
+      return setMsg({ tipo: "error", texto: "Ingrese folio" });
+    }
+    setMsg({ tipo: null, texto: "" });
     try {
-      const { barcode_base64 } = await postJson(
-        `/barcode${SERVICIOS[service].path}`,
-        { id: idCliente }
+      const res = await postJson(
+        `${SERVICIOS[service].path}/barcode`,
+        { folio }
       );
-      setBarcode(barcode_base64);
-      setMsg({ tipo: 'ok', texto: 'Código generado' });
+      // esperar que la API devuelva { barcode_base64: "data:image/png;base64,..." }
+      setBarcodeB64(res.barcode_base64);
     } catch (e) {
-      setMsg({ tipo: 'error', texto: e.message });
+      setMsg({ tipo: "error", texto: e.message });
     }
   };
 
-  const registrarPago = async (codigo) => {
+  const startScanner = () => {
+    setScanResult(null);
+    setMsg({ tipo: null, texto: "" });
+    setScanning(true);
+  };
+
+  const handleScan = async (result) => {
+    if (!result) return;
+    setScanning(false);
+    setScanResult(result.text);
+    // registrar pago en endpoint /pago de cada servicio
     try {
-      await postJson(`/pago${SERVICIOS[service].path}`, { codigo });
-      setMsg({ tipo: 'ok', texto: `Pago registrado (${codigo})` });
-      setBarcode('');
-      setScanning(false);
+      const resp = await postJson(
+        `${SERVICIOS[service].path}/pago`,
+        { folio: result.text }
+      );
+      setMsg({ tipo: "success", texto: `✓ Pago registrado (${resp.message || result.text})` });
     } catch (e) {
-      setMsg({ tipo: 'error', texto: e.message });
+      setMsg({ tipo: "error", texto: e.message });
     }
-  };
-
-  const handleDetected = (result) => {
-    if (result?.text) registrarPago(result.text);
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 space-y-6">
-      <h1 className="text-2xl font-bold">Pagos de Servicios</h1>
-
-      <select value={service} onChange={(e)=>setService(e.target.value)}
-              className="w-full border rounded p-2">
-        {Object.entries(SERVICIOS).map(([val,{label}]) =>
-          <option key={val} value={val}>{label}</option>)}
-      </select>
-
-      <input value={idCliente} onChange={e=>setIdCliente(e.target.value)}
-             placeholder="Número de cliente / clave"
-             className="w-full border rounded p-2"/>
-
-      <button onClick={generarCodigo}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">
-        Generar código
-      </button>
-
-      {barcodeB64 && (
-        <div className="text-center space-y-4">
-          <img src={barcodeB64} alt="Código de barras" className="inline-block"/>
-          <button onClick={()=>setScanning(true)}
-                  className="bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded">
-            Escanear y pagar
-          </button>
+    <div className="jmas-page-wrapper">
+      {/* Navbar homogénea */}
+      <nav className="navbar-forms">
+        <div className="navbar-left">
+          <img src="/assets/logo-tss.png" alt="Logo" className="nav-logo" />
+          <a href="/predial"      className="nav-item">Predial</a>
+          <a href="/jmas"         className="nav-item">JMAS</a>
+          <a href="/revalidacion" className="nav-item">Revalidación</a>
+          <a href="/gasnn"        className="nav-item active">Gas Natural</a>
         </div>
-      )}
-
-      {scanning && (
-        <BarcodeScanner
-        onUpdate={(err, res) => !err && res && handleDetected(res)}
-        width={350}
-        height={250}
-        className="mx-auto"
-        />      
-      )}
-      {msg.tipo && (
-        <div
-          className={`p-3 rounded ${
-            msg.tipo === 'ok'
-              ? 'bg-green-100 text-green-800'
-              : 'bg-red-100 text-red-800'
-          }`}
-        >
-          {msg.texto}
+        <div className="navbar-right">
+          <div className="user-menu">
+            <img src="/user.jpg" alt="Usuario" className="user-icon" />
+            <div className="user-dropdown">
+              <button className="user-btn">Perfil</button>
+              <button className="user-btn">Cerrar sesión</button>
+            </div>
+          </div>
         </div>
-      )}
+      </nav>
+
+      <h1 className="jmas-title">Códigos de Barras y Escaneo</h1>
+
+      <div className="jmas-content-wrapper">
+        <section className="jmas-form-section">
+          <div className="jmas-form-layout">
+            {/* Selección de servicio */}
+            <div className="form-field-group">
+              <label htmlFor="service" className="form-label">Servicio</label>
+              <select
+                id="service"
+                value={service}
+                onChange={e => setService(e.target.value)}
+                className="jmas-input jmas-select"
+              >
+                {Object.entries(SERVICIOS).map(([key,{label}])=>(
+                  <option key={key} value={key}>{label}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Generar Código */}
+            <div className="form-field-group">
+              <label htmlFor="folio" className="form-label">Folio</label>
+              <input
+                id="folio"
+                type="text"
+                placeholder="Ingrese folio"
+                value={folio}
+                onChange={e => setFolio(e.target.value)}
+                className="jmas-input"
+              />
+            </div>
+            <button
+              className="jmas-submit-button"
+              onClick={generarCodigo}
+            >
+              Generar Código
+            </button>
+
+            {barcodeB64 && (
+              <div className="barcode-preview" style={{ marginTop: '1rem' }}>
+                <img src={barcodeB64} alt="Código de barras generado" />
+              </div>
+            )}
+
+            {/* Escáner */}
+            {!scanning && (
+              <button
+                className="jmas-submit-button"
+                style={{ marginTop: '1.5rem' }}
+                onClick={startScanner}
+              >
+                Escanear Pago
+              </button>
+            )}
+            {scanning && (
+              <div style={{ marginTop: '1rem' }}>
+                <BarcodeScanner
+                  onUpdate={(err, result) => {
+                    if (result) handleScan(result);
+                  }}
+                />
+                <button
+                  className="jmas-submit-button"
+                  style={{ marginTop: '0.5rem' }}
+                  onClick={() => setScanning(false)}
+                >
+                  Cancelar Escaneo
+                </button>
+              </div>
+            )}
+
+            {/* Mensajes */}
+            {msg.texto && (
+              <p
+                className={
+                  msg.tipo === "error" ? "jmas-error-message" : "jmas-service-detail"
+                }
+                style={{ marginTop: '1rem' }}
+              >
+                {msg.texto}
+              </p>
+            )}
+
+            {/* Mostrar último resultado de escaneo */}
+            {scanResult && (
+              <p className="jmas-service-detail" style={{ marginTop: '0.5rem' }}>
+                Resultado: {scanResult}
+              </p>
+            )}
+          </div>
+        </section>
+      </div>
+
+      <footer className="footer-yellow" />
     </div>
   );
 }

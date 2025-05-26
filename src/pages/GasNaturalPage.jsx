@@ -1,26 +1,12 @@
-// src/pages/JmasPage.jsx
+// src/pages/GasNaturalPage.jsx
 import React, { useState, useEffect } from "react";
-import { getJmas, postJmas } from "../services/api";
+import { getGasnn, postGasnn } from "../services/api";
 import "./forms.css";
 
-export default function JmasPage() {
-  const [form, setForm] = useState({
-    Cuenta: "",
-    direccion: "",
-    giro: "",
-    numero_medidor: "",
-    nombres_apellidos: "",
-  });
-  const [msg, setMsg] = useState("");
+export default function GasNaturalPage() {
+  const [form, setForm]         = useState({ numero_cliente: "" });
+  const [msg, setMsg]           = useState("");
   const [registros, setRegistros] = useState([]);
-
-  const fields = [
-    { name: "Cuenta",            label: "Cuenta" },
-    { name: "direccion",         label: "Dirección" },
-    { name: "giro",              label: "Giro" },
-    { name: "numero_medidor",    label: "Número de medidor" },
-    { name: "nombres_apellidos", label: "Nombre y apellidos" },
-  ];
 
   useEffect(() => {
     loadRegistros();
@@ -28,10 +14,10 @@ export default function JmasPage() {
 
   const loadRegistros = async () => {
     try {
-      const data = await getJmas();
+      const data = await getGasnn();
       setRegistros(data);
     } catch (err) {
-      console.error("Error al cargar registros JMAS:", err);
+      console.error("Error al cargar registros Gas Natural:", err);
     }
   };
 
@@ -39,15 +25,9 @@ export default function JmasPage() {
     e.preventDefault();
     setMsg("Enviando…");
     try {
-      const res = await postJmas(form);
+      const res = await postGasnn(form);
       setMsg(`✓ ${res.message || "Registro exitoso"}`);
-      setForm({
-        Cuenta: "",
-        direccion: "",
-        giro: "",
-        numero_medidor: "",
-        nombres_apellidos: "",
-      });
+      setForm({ numero_cliente: "" });
       loadRegistros();
     } catch (err) {
       setMsg("Error: " + err.message);
@@ -59,11 +39,11 @@ export default function JmasPage() {
       {/* Navbar homogénea */}
       <nav className="navbar-forms">
         <div className="navbar-left">
-          <img src="/assets/logo-tss.png" alt="Logo" className="nav-logo" />
+          <img src="/logo.png" alt="Logo" className="nav-logo" />
           <a href="/predial"      className="nav-item">Predial</a>
-          <a href="/jmas"         className="nav-item active">JMAS</a>
+          <a href="/jmas"         className="nav-item">JMAS</a>
           <a href="/revalidacion" className="nav-item">Revalidación</a>
-          <a href="/gasnn"        className="nav-item">Gas Natural</a>
+          <a href="/gasnn"        className="nav-item active">Gas Natural</a>
         </div>
         <div className="navbar-right">
           <div className="user-menu">
@@ -77,30 +57,27 @@ export default function JmasPage() {
       </nav>
 
       {/* Título principal */}
-      <h1 className="jmas-title">Servicio JMAS</h1>
+      <h1 className="jmas-title">Gas Natural</h1>
 
       <div className="jmas-content-wrapper">
         {/* Formulario */}
         <section className="jmas-form-section">
           <form onSubmit={handleSubmit} className="jmas-form-layout">
-            {fields.map(({ name, label }) => (
-              <div key={name} className="form-field-group">
-                <label htmlFor={name} className="form-label">
-                  {label}
-                </label>
-                <input
-                  id={name}
-                  name={name}
-                  value={form[name]}
-                  onChange={(e) =>
-                    setForm({ ...form, [name]: e.target.value })
-                  }
-                  placeholder={label}
-                  className="jmas-input"
-                  required
-                />
-              </div>
-            ))}
+            <div className="form-field-group">
+              <label htmlFor="numero_cliente" className="form-label">
+                Número de cliente
+              </label>
+              <input
+                id="numero_cliente"
+                name="numero_cliente"
+                type="text"
+                placeholder="Ingrese número de cliente"
+                value={form.numero_cliente}
+                onChange={e => setForm({ numero_cliente: e.target.value })}
+                className="jmas-input"
+                required
+              />
+            </div>
 
             <button type="submit" className="jmas-submit-button">
               Registrar
@@ -114,21 +91,23 @@ export default function JmasPage() {
           )}
         </section>
 
-        {/* Registros */}
+        {/* Resultados */}
         <section className="jmas-services-section">
           <h2 className="jmas-subtitle">Servicios Registrados</h2>
           <div className="jmas-services-list">
             {registros.map((r, i) => (
               <div key={i} className="jmas-service-item">
                 <div className="jmas-service-account">
-                  Cuenta: {r.Cuenta}
+                  Cliente: {r.numero_cliente}
                 </div>
                 <div className="jmas-service-detail">
-                  Nombre: {r.nombres_apellidos}
+                  Estatus: {r.estatus}
                 </div>
-                <div className="jmas-service-detail">
-                  Estatus: {r.status || r.estatus}
-                </div>
+                {typeof r.total_pagar !== "undefined" && (
+                  <div className="jmas-service-detail">
+                    Total a pagar: ${r.total_pagar.toFixed(2)}
+                  </div>
+                )}
               </div>
             ))}
           </div>

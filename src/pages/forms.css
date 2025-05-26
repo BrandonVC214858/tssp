@@ -1,0 +1,428 @@
+/* Forms.css */
+:root {
+    --white: #FFFFFF;
+    --gray-1: #919489;
+    --gray-2: #C4C4CA;
+    --gray-3: #A0A6AB;
+    --primary: #F8AD15;
+    --accent-1: #08677E;
+    --accent-2: #03485E;
+  }
+  
+  /* Page wrapper for forms */
+  .jmas-page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    background: var(--white);
+  }
+  
+  /* Navbar for Forms */
+  .navbar-forms {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0rem 0;
+    background: var(--accent-2);
+    color: var(--white);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    width: 100%;
+  }
+  
+  .navbar-forms .navbar-left {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    padding-left: 2rem;
+  }
+  
+  .navbar-forms .navbar-right {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding-right: 2rem;
+  }
+  
+  .navbar-forms .nav-item {
+    font-weight: bold;
+    color: var(--white);
+    text-decoration: none;
+    padding: 0.5rem 0;
+    transition: color 0.2s ease;
+  }
+  
+  .navbar-forms .nav-item:hover {
+    color: var(--primary);
+  }
+  
+  .navbar-forms .nav-item.active {
+    color: var(--primary);
+  }
+  
+  .navbar-forms .dropdown {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .navbar-forms .dropdown-content {
+    position: absolute;
+    top: 50px;
+    background: var(--white);
+    color: black;
+    list-style: none;
+    padding: 0.5rem;
+    display: none;
+    border: 1px solid var(--gray-2);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 100;
+    min-width: 150px;
+  }
+  
+  .navbar-forms .dropdown-content li {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .navbar-forms .dropdown-content li a {
+    text-decoration: none;
+    color: var(--accent-2);
+    display: block;
+    transition: color 0.2s ease;
+  }
+  
+  .navbar-forms .dropdown-content li a:hover {
+    color: var(--primary);
+  }
+  
+  .navbar-forms .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  
+  .navbar-forms .nav-logo {
+    height: 80px;
+  }
+  
+  /* User menu (hover dropdown) for Forms */
+  .navbar-forms .user-menu {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .navbar-forms .user-icon {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+  }
+  
+  .navbar-forms .user-dropdown {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background-color: white;
+    border: 1px solid var(--gray-2);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: none;
+    flex-direction: column;
+    padding: 0.5rem;
+    z-index: 200;
+    min-width: 140px;
+  }
+  
+  .navbar-forms .user-menu:hover .user-dropdown {
+    display: flex;
+  }
+  
+  .navbar-forms .user-btn {
+    background-color: var(--accent-1);
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+    cursor: pointer;
+    text-align: left;
+  }
+  
+  .navbar-forms .user-btn:last-child {
+      margin-bottom: 0;
+  }
+  
+  .navbar-forms .user-btn:hover {
+    background-color: var(--accent-2);
+  }
+  
+  /* Main content wrapper for form and list */
+  .jmas-content-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+    gap: 3rem;
+    padding: 2rem;
+    flex-grow: 1;
+    margin-top: -2rem; /* Adjusted to pull content up, reducing space from main title */
+  }
+  
+  .jmas-form-section,
+  .jmas-services-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Specific adjustments for the title */
+  .jmas-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent-2);
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+    text-align: left;
+    width: 100%;
+    max-width: 1200px;
+    padding-left: 2rem;
+    box-sizing: border-box;
+  }
+  
+  
+  .jmas-form-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem 2rem;
+    width: 100%;
+    max-width: 600px;
+    padding: 2.5rem;
+    background-color: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-field-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gray-1);
+    margin-bottom: 0.5rem;
+  }
+  
+  .jmas-input,
+  .jmas-select {
+    padding: 0.9rem 1.2rem;
+    border: 1px solid var(--gray-2);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #333;
+    background-color: var(--white);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .jmas-input::placeholder {
+    color: var(--gray-2);
+  }
+  
+  .jmas-input:focus,
+  .jmas-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(248, 173, 21, 0.3);
+    outline: none;
+  }
+  
+  .jmas-select {
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2303485E%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-6.5%200-12.3%203.2-16.1%208.1-3.9%204.9-4.8%2011.5-2.4%2017.7l139.3%20179.8c5.4%207%2013.6%2011.2%2022.6%2011.2s17.2-4.2%2022.6-11.2l139.3-179.8c2.4-6.2%201.5-12.9-2.4-17.7z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 0.8em;
+    padding-right: 2.5rem;
+  }
+  
+  .jmas-submit-button {
+    grid-column: 1 / span 2;
+    background-color: var(--primary);
+    color: var(--white);
+    font-weight: bold;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    margin-top: 1rem;
+    max-width: 300px;
+    justify-self: start;
+  }
+  
+  .jmas-submit-button:hover:not(:disabled) {
+    background-color: #e69d10;
+    transform: translateY(-2px);
+  }
+  
+  .jmas-submit-button:disabled {
+    background-color: var(--gray-2);
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  
+  .jmas-error-message {
+    color: #e74c3c;
+    margin-top: 1rem;
+    font-weight: 500;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .jmas-subtitle {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--accent-2);
+    margin-top: 0rem; /* Changed from 0rem to -1.5rem to pull it up further */
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .jmas-services-list {
+    display: grid;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 500px;
+    padding-top: 1.5rem;
+  }
+  
+  .jmas-service-item {
+    background-color: var(--white);
+    border: 1px solid var(--gray-2);
+    border-left: 5px solid var(--primary);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .jmas-service-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+  }
+  
+  .jmas-service-account {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--accent-2);
+    margin-bottom: 0.5rem;
+  }
+  
+  .jmas-service-detail {
+    font-size: 0.95rem;
+    color: var(--gray-1);
+    margin-bottom: 0.3rem;
+  }
+  
+  /* Footer */
+  .footer-yellow {
+    height: 60px;
+    background: var(--primary);
+    width: 100%;
+  }
+  
+  /* Responsive */
+  @media (max-width: 992px) {
+    .jmas-content-wrapper {
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+    }
+  
+    .jmas-form-section,
+    .jmas-services-section {
+      width: 100%;
+      max-width: 600px;
+    }
+  
+    .jmas-form-layout {
+      max-width: 100%;
+    }
+  
+    .jmas-services-list {
+      max-width: 100%;
+    }
+  
+    .jmas-title {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      padding-left: 0;
+    }
+  
+    .navbar-forms {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 1rem 0;
+    }
+  
+    .navbar-forms .navbar-left,
+    .navbar-forms .navbar-right {
+      width: 100%;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      gap: 1rem;
+      padding: 0 1rem;
+    }
+  
+    .navbar-forms .nav-item {
+      font-size: 0.9rem;
+    }
+  
+    .navbar-forms .nav-logo {
+      height: 50px;
+    }
+  
+    .navbar-forms .user-icon {
+      height: 25px;
+      width: 25px;
+    }
+  
+    .navbar-forms .dropdown-content {
+      top: 40px;
+    }
+  
+    .jmas-input,
+    .jmas-select {
+      font-size: 0.95rem;
+      padding: 0.8rem 1rem;
+    }
+  
+    .jmas-submit-button {
+      grid-column: 1 / -1;
+      max-width: 100%;
+      justify-self: stretch;
+    }
+  
+    .jmas-subtitle {
+      font-size: 1.5rem;
+      margin-top: 2rem; /* Keep a decent margin when stacked vertically */
+      margin-bottom: 1rem;
+    }
+  }
+  
+  /* Adjust for smaller screens (e.g., mobile) */
+  @media (max-width: 576px) {
+    .jmas-form-layout {
+      padding: 1rem;
+    }
+  
+    .jmas-submit-button {
+      padding: 0.8rem 1rem;
+      font-size: 1rem;
+    }
+  }

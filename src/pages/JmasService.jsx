@@ -1,5 +1,7 @@
+// src/pages/JmasPage.jsx
 import React, { useState, useEffect } from "react";
 import { getJmas, postJmas } from "../services/api";
+import "./forms.css";
 
 export default function JmasPage() {
   const [form, setForm] = useState({
@@ -12,7 +14,14 @@ export default function JmasPage() {
   const [msg, setMsg] = useState("");
   const [registros, setRegistros] = useState([]);
 
-  // Carga inicial de registros
+  const fields = [
+    { name: "Cuenta",            label: "Cuenta" },
+    { name: "direccion",         label: "Dirección" },
+    { name: "giro",              label: "Giro" },
+    { name: "numero_medidor",    label: "Número de medidor" },
+    { name: "nombres_apellidos", label: "Nombre y apellidos" },
+  ];
+
   useEffect(() => {
     loadRegistros();
   }, []);
@@ -46,36 +55,88 @@ export default function JmasPage() {
   };
 
   return (
-    <section className="p-4 space-y-4">
-      <h2 className="text-lg font-bold">Servicio JMAS</h2>
+    <div className="jmas-page-wrapper">
+      {/* Navbar homogénea */}
+      <nav className="navbar-forms">
+        <div className="navbar-left">
+          <img src="/assets/logo-tss.png" alt="Logo" className="nav-logo" />
+          <a href="/predial"      className="nav-item">Predial</a>
+          <a href="/jmas"         className="nav-item active">JMAS</a>
+          <a href="/revalidacion" className="nav-item">Revalidación</a>
+          <a href="/gasnn"        className="nav-item">Gas Natural</a>
+        </div>
+        <div className="navbar-right">
+          <div className="user-menu">
+            <img src="/user.jpg" alt="Usuario" className="user-icon" />
+            <div className="user-dropdown">
+              <button className="user-btn">Perfil</button>
+              <button className="user-btn">Cerrar sesión</button>
+            </div>
+          </div>
+        </div>
+      </nav>
 
-      <form onSubmit={handleSubmit} className="space-y-2">
-        {["Cuenta","direccion","giro","numero_medidor","nombres_apellidos"].map(name => (
-          <input
-            key={name}
-            required
-            name={name}
-            value={form[name]}
-            onChange={e => setForm({ ...form, [name]: e.target.value })}
-            placeholder={name.charAt(0).toUpperCase() + name.slice(1).replace("_"," ")}
-            className="border p-2 rounded w-full"
-          />
-        ))}
-        <button className="bg-blue-600 text-white px-4 py-2 rounded">
-          Registrar
-        </button>
-      </form>
+      {/* Título principal */}
+      <h1 className="jmas-title">Servicio JMAS</h1>
 
-      {msg && <p>{msg}</p>}
+      <div className="jmas-content-wrapper">
+        {/* Formulario */}
+        <section className="jmas-form-section">
+          <form onSubmit={handleSubmit} className="jmas-form-layout">
+            {fields.map(({ name, label }) => (
+              <div key={name} className="form-field-group">
+                <label htmlFor={name} className="form-label">
+                  {label}
+                </label>
+                <input
+                  id={name}
+                  name={name}
+                  value={form[name]}
+                  onChange={(e) =>
+                    setForm({ ...form, [name]: e.target.value })
+                  }
+                  placeholder={label}
+                  className="jmas-input"
+                  required
+                />
+              </div>
+            ))}
 
-      <h3 className="text-lg font-bold">Servicios Registrados</h3>
-      <ul className="list-disc list-inside">
-        {registros.map((r, i) => (
-          <li key={i}>
-            {r.nombres_apellidos} — Cuenta: {r.Cuenta} — Estatus: {r.status || r.estatus}
-          </li>
-        ))}
-      </ul>
-    </section>
-);
+            <button type="submit" className="jmas-submit-button">
+              Registrar
+            </button>
+          </form>
+
+          {msg && (
+            <p className="jmas-service-detail" style={{ marginTop: '1rem' }}>
+              {msg}
+            </p>
+          )}
+        </section>
+
+        {/* Registros */}
+        <section className="jmas-services-section">
+          <h2 className="jmas-subtitle">Servicios Registrados</h2>
+          <div className="jmas-services-list">
+            {registros.map((r, i) => (
+              <div key={i} className="jmas-service-item">
+                <div className="jmas-service-account">
+                  Cuenta: {r.Cuenta}
+                </div>
+                <div className="jmas-service-detail">
+                  Nombre: {r.nombres_apellidos}
+                </div>
+                <div className="jmas-service-detail">
+                  Estatus: {r.status || r.estatus}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      {/* Footer */}
+      <footer className="footer-yellow" />
+    </div>
+  );
 }
